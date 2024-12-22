@@ -6,16 +6,6 @@ window.onload = function() {
     
     const gl = canvas.getContext("webgl");
     
-    if (!gl) {
-        console.log("WebGL not supported, falling back to experimental-webgl");
-        gl = canvas.getContext("experimental-webgl");
-    }
-    
-    if (!gl) {
-        alert("WebGL not supported!");
-        return;
-    }
-    
     // Shader source code
     const vertexShaderSource = `
         attribute vec4 a_position;
