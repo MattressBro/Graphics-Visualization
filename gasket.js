@@ -15,7 +15,6 @@ function init() {
         vec2(1, -1)
     ];
     divideTriangle(vertices[0], vertices[1], vertices[2], numTimesToSubdivide);
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW);
 
     gl.viewport( 0, 0, canvas.width, canvas.height );
     gl.clearColor( 1.0, 1.0, 1.0, 1.0 );
@@ -26,25 +25,18 @@ function init() {
     var bufferId = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, bufferId );
     gl.bufferData( gl.ARRAY_BUFFER, 50000, gl.STATIC_DRAW );
-    gl.bufferData( gl.ARRAY_BUFFER, 0, flatten(points));
-
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW );
     var vPosition = gl.getAttribLocation( program, "vPosition" );
     gl.vertexAttribPointer( vPosition, 2, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vPosition );
 
-        document.getElementById("slider").onchange = function(event) {
-            numTimesToSubdivide = parseInt(event.target.value);
-        };
+    document.getElementById("slider").onchange = function(event) {
+        numTimesToSubdivide = parseInt(event.target.value);
+    };
 
     render();
-}
-document.getElementById("slider").onchange = function(event) {
-    numTimesToSubdivide = parseInt(event.target.value);
-    points = [];
-    divideTriangle(vertices[0], vertices[1], vertices[2], numTimesToSubdivide);
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW);
-    render();
 };
+
 
 function triangle(a, b, c) {
     points.push(a, b, c);

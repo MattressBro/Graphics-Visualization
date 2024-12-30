@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gasket Visualization</title>
-    <script id="vertex-shader" type="   x-shader/x-vertex">
+    <script id="vertex-shader" type="x-shader/x-vertex">
     attribute vec4 vPosition;
     void main() {
         gl_Position = vPosition;
@@ -23,9 +23,11 @@
 </head>
 <body>
     <h1>Welcome to Gasket Visualization</h1>
-    <canvas id="gl-canvas" width="512" height="512"></canvas>
     <div>
         recursive steps 0<input type="range" id="slider" min="0" max="7" value="0" step="1">
+        7
     </div>
+    <canvas id="gl-canvas" width="512" height="512"></canvas>
+    
 </body>
 </html>
