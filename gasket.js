@@ -1,5 +1,4 @@
-"use strict"
-
+"use strict";
 var canvas;
 var gl;
 var points = [];
@@ -16,6 +15,7 @@ function init() {
         vec2(1, -1)
     ];
     divideTriangle(vertices[0], vertices[1], vertices[2], numTimesToSubdivide);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW);
 
     gl.viewport( 0, 0, canvas.width, canvas.height );
     gl.clearColor( 1.0, 1.0, 1.0, 1.0 );
@@ -38,6 +38,13 @@ function init() {
 
     render();
 }
+document.getElementById("slider").onchange = function(event) {
+    numTimesToSubdivide = parseInt(event.target.value);
+    points = [];
+    divideTriangle(vertices[0], vertices[1], vertices[2], numTimesToSubdivide);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(points), gl.STATIC_DRAW);
+    render();
+};
 
 function triangle(a, b, c) {
     points.push(a, b, c);
