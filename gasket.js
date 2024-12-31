@@ -17,7 +17,7 @@ function init() {
     divideTriangle(vertices[0], vertices[1], vertices[2], numTimesToSubdivide);
 
     gl.viewport( 0, 0, canvas.width, canvas.height );
-    gl.clearColor( 1.0, 1.0, 1.0, 1.0 );
+    gl.clearColor( 0.4, 0.5, 1.0, 1.0 );
 
     var program = initShaders( gl, "vertex-shader", "fragment-shader" );
     gl.useProgram( program );
