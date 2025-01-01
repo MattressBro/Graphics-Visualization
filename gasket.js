@@ -10,7 +10,7 @@ function init() {
     if( !gl ) { alert( "WebGL isn't available" ); }
 
     var vertices = [
-        vec2(-0.5, -1),
+        vec2(-1, -1),
         vec2(0, 1),
         vec2(1, -1)
     ];
