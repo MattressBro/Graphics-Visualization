@@ -10,7 +10,7 @@ function init() {
     if( !gl ) { alert( "WebGL isn't available" ); }
 
     var vertices = [
-        vec2(-1, -1),
+        vec2(-0.5, -1),
         vec2(0, 1),
         vec2(1, -1)
     ];
@@ -21,7 +21,7 @@ function init() {
 
     var program = initShaders( gl, "vertex-shader", "fragment-shader" );
     gl.useProgram( program );
-
+    
     var bufferId = gl.createBuffer();
     gl.bindBuffer( gl.ARRAY_BUFFER, bufferId );
     gl.bufferData( gl.ARRAY_BUFFER, 50000, gl.STATIC_DRAW );
