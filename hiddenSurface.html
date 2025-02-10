@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Painter's Algorithm Example</title>
+    <style>
+        canvas { width: 100%; height: 100% }
+    </style>
+</head>
+<body>
+    <button id="moveButton">Rotate Triangle</button>
+    <canvas id="glcanvas"></canvas>
+    <script type="text/javascript">
+        const canvas = document.getElementById('glcanvas');
+        const gl = canvas.getContext('webgl');
+
+        if (!gl) {
+            alert('Unable to initialize WebGL. Your browser may not support it.');
+            throw new Error('WebGL not supported');
+        }
+
+        const vsSource = `
+            attribute vec4 aVertexPosition;
+            uniform mat4 uModelViewMatrix;
+            void main(void) {
+                gl_Position = uModelViewMatrix * aVertexPosition;
+            }
+        `;
+
+        const fsSource = `
+            precision mediump float;
+            uniform vec4 uColor;
+            void main(void) {
+                gl_FragColor = uColor;
+            }
+        `;
+
+        function initShaderProgram(gl, vsSource, fsSource) {
+            const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource);
+            const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
+
+            const shaderProgram = gl.createProgram();
+            gl.attachShader(shaderProgram, vertexShader);
+            gl.attachShader(shaderProgram, fragmentShader);
+            gl.linkProgram(shaderProgram);
+
+            if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+                alert('Unable to initialize the shader program: ' + gl.getProgramInfoLog(shaderProgram));
+                return null;
+            }
+
+            return shaderProgram;
+        }
+
+        function loadShader(gl, type, source) {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+
+            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                alert('An error occurred compiling the shaders: ' + gl.getShaderInfoLog(shader));
+                gl.deleteShader(shader);
+                return null;
+            }
+
+            return shader;
+        }
+
+        const shaderProgram = initShaderProgram(gl, vsSource, fsSource);
+        const programInfo = {
+            program: shaderProgram,
+            attribLocations: {
+                vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
+            },
+            uniformLocations: {
+                color: gl.getUniformLocation(shaderProgram, 'uColor'),
+                modelViewMatrix: gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
+            },
+        };
+
+        let buffers = initBuffers(gl);
+
+        let rotationAngle = 0;
+        const rotationStep = Math.PI / 4; // 45 degrees
+
+        function render() {
+            drawScene(gl, programInfo, buffers);
+            requestAnimationFrame(render);
+        }
+        requestAnimationFrame(render);
+
+        function initBuffers(gl) {
+            const positionBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+
+            const positions = [
+                0.4,  0.5,  -0.5,  0.5,  0.0, -0.5,
+                -0.5, -0.5,  0.5, -0.5,  0.0,  0.0
+            ];
+
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+            return { position: positionBuffer };
+        }
+
+        function drawScene(gl, programInfo, buffers) {
+            gl.clearColor(0.0, 0.0, 0.0, 0.0); // Set alpha to 0.0 for clear background
+            gl.clearDepth(1.0);
+            gl.enable(gl.DEPTH_TEST);
+            gl.depthFunc(gl.LEQUAL);
+
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+            const numComponents = 2;
+            const type = gl.FLOAT;
+            const normalize = false;
+            const stride = 0;
+            const offset = 0;
+            gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
+            gl.vertexAttribPointer(
+                programInfo.attribLocations.vertexPosition,
+                numComponents,
+                type,
+                normalize,
+                stride,
+                offset);
+            gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
+
+            gl.useProgram(programInfo.program);
+
+            const modelViewMatrix = mat4.create();
+            mat4.rotate(modelViewMatrix, modelViewMatrix, rotationAngle, [0, 0, 1]);
+
+            gl.uniformMatrix4fv(programInfo.uniformLocations.modelViewMatrix, false, modelViewMatrix);
+
+            gl.uniform4f(programInfo.uniformLocations.color, 1.0, 0.0, 0.0, 1.0);
+            gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+            gl.uniform4f(programInfo.uniformLocations.color, 0.0, 0.0, 1.0, 1.0);
+            gl.drawArrays(gl.TRIANGLES, 3, 3);
+        }
+
+        document.getElementById('moveButton').addEventListener('click', () => {
+            rotationAngle += rotationStep;
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix-min.js"></script>
+</body>
+</html>
