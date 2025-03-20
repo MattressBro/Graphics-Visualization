@@ -102,7 +102,7 @@ function initBuffers(gl) {
 
     // Define the positions of the vertices
     var positions = [
-        0.4,  0.5,  0.0,
+        0.5,  0.5,  0.0,
         -0.4,  0.5,  0.2,
         0.0, -0.5,  0.1,
         -0.5, -0.5,  0.1,
